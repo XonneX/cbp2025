@@ -1,0 +1,9 @@
+*.o
+/cbp
+/lib/libcbp.a
+/sample_results
+/traces
+.direnv
+.idea
+.vs
+compile_commands.json
