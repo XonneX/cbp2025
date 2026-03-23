@@ -2,6 +2,9 @@
 #define _PREDICTOR_H_
 
 #include <stdlib.h>
+#include <cstdint>
+#include <cassert>
+#include <unordered_map>
 
 struct SampleHist
 {
@@ -11,6 +14,7 @@ struct SampleHist
       SampleHist()
       {
           ghist = 0;
+          tage_pred = false;
       }
 };
 
@@ -25,13 +29,9 @@ class SampleCondPredictor
         {
         }
 
-        void setup()
-        {
-        }
+        void setup();
 
-        void terminate()
-        {
-        }
+        void terminate();
 
         // sample function to get unique instruction id
         uint64_t get_unique_inst_id(uint64_t seq_no, uint8_t piece) const
@@ -49,10 +49,7 @@ class SampleCondPredictor
             return pred_taken;
         }
 
-        bool predict_using_given_hist (uint64_t seq_no, uint8_t piece, uint64_t PC, const SampleHist& hist_to_use, const bool pred_time_predict)
-        {
-            return hist_to_use.tage_pred;
-        }
+        bool predict_using_given_hist(uint64_t seq_no, uint8_t piece, uint64_t PC, const SampleHist& hist_to_use, const bool pred_time_predict);
 
         void history_update (uint64_t seq_no, uint8_t piece, uint64_t PC, bool taken, uint64_t nextPC)
         {
@@ -71,9 +68,7 @@ class SampleCondPredictor
             pred_time_histories.erase(pred_hist_key);
         }
 
-        void update (uint64_t PC, bool resolveDir, bool pred_taken, uint64_t nextPC, const SampleHist& hist_to_use)
-        {
-        }
+        void update(uint64_t PC, bool resolveDir, bool pred_taken, uint64_t nextPC, const SampleHist& hist_to_use);
 };
 // =================
 // Predictor End
