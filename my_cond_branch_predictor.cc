@@ -3,12 +3,13 @@
 #include <random>
 
 static constexpr int N = 32; // input size
-static constexpr int H = 32; // hidden neurons
+// TODO: play with this
+static constexpr int L = 64; // neurons (hidden layer)
 
-int8_t W[H][N]; // fixed input weights
-int16_t b[H]; // fixed hidden biases
+int8_t W[N][L]; // weights hidden layer (fixed)
+int16_t b[L]; // biases hidden layer (fixed)
 
-int16_t beta[H]; // output weights
+int16_t beta[N]; // output weights
 
 void SampleCondPredictor::setup()
 {
@@ -46,7 +47,27 @@ void build_features(uint64_t PC, const SampleHist& hist, int8_t x[N])
         x[offset++] = ((hist.ghist >> i) & 1ULL) ? 1 : -1;
     }
 
-    x[offset++] = hist.tage_pred ? 1 : -1;
+    // x[offset++] = hist.tage_pred ? 1 : -1;
+}
+
+void hidden_layer(int8_t W[N][L], int8_t X[N], int8_t b[L]) {
+    int H[N];
+    for (int Ni = 0; Ni < N; ++Ni) {
+        int sum = 0;
+        for (int Li = 0; Li < L; ++Li) {
+            H[Ni] = g(W[Ni][Li] * X[Ni] + b[Li]);
+        }
+    }
+}
+
+int8_t[] output_layer(int8_t H[N], int8_t beta[N]) {
+    int8_t fx[N];
+
+    for (int Ni = 0; Ni < N; Ni++) {
+        fx[Ni] = H[Ni] * beta[Ni];
+    }
+
+    return fx;
 }
 
 bool SampleCondPredictor::predict_using_given_hist(
@@ -104,14 +125,9 @@ void SampleCondPredictor::update(
     // int target = resolveDir ? 1 : -1; // traing for correct prediction
     int target = (hist_to_use.tage_pred == resolveDir) ? 1 : -1; // train to when tage is wrong
 
-    // maybe only update if branch wrong or score low?
     if ((pred_taken != resolveDir) || (score >= -8 && score <= 8)) {
         for (int h = 0; h < H; ++h) {
             beta[h] += target * a[h];
-
-            // clip values? why?
-            if (beta[h] > 127) beta[h] = 127;
-            if (beta[h] < -127) beta[h] = -127;
         }
     }
 }
