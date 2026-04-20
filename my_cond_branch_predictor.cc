@@ -46,11 +46,11 @@ void build_features(uint64_t PC, const SampleHist& hist, double x[NUM_INPUT_NODE
 {
 	int offset = 0;
 
-	for (int i = 0; i < 16; ++i) {
+	for (int i = 0; i < 64; ++i) {
 		x[offset++] = ((PC >> i) & 1ULL) ? 1.0 : 0.0;
 	}
 
-	for (int i = 0; i < 16; ++i) {
+	for (int i = 0; i < 64; ++i) {
 		x[offset++] = ((hist.ghist >> i) & 1ULL) ? 1.0 : 0.0;
 	}
 
