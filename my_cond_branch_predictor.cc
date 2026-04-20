@@ -14,9 +14,8 @@ static int train_pos = 0;
 
 void SampleCondPredictor::setup()
 {
-	// Not needed right?
-	// active_hist.ghist = 0;
-	// active_hist.tage_pred = false;
+	active_hist.ghist = 0;
+	active_hist.tage_pred = false;
 
 	std::mt19937 rng(12345);
 	std::uniform_real_distribution<double> w_dist(-1.0, 1.0);
@@ -48,16 +47,16 @@ void build_features(uint64_t PC, const SampleHist& hist, double x[NUM_INPUT_NODE
 	int offset = 0;
 
 	for (int i = 0; i < 16; ++i) {
-		x[offset++] = ((PC >> i) & 1ULL) ? 1.0 : -1.0;
+		x[offset++] = ((PC >> i) & 1ULL) ? 1.0 : 0.0;
 	}
 
 	for (int i = 0; i < 16; ++i) {
-		x[offset++] = ((hist.ghist >> i) & 1ULL) ? 1.0 : -1.0;
+		x[offset++] = ((hist.ghist >> i) & 1ULL) ? 1.0 : 0.0;
 	}
 
 	// padding at the end (if needed)
 	while (offset < NUM_INPUT_NODES) {
-		x[offset++] = -1.0;
+		x[offset++] = 0.0;
 	}
 }
 
@@ -99,7 +98,7 @@ void SampleCondPredictor::update(
 	double x[NUM_INPUT_NODES];
 	build_features(PC, hist_to_use, x);
 	
-	double target = resolveDir ? 1.0 : -1.0;
+	double target = resolveDir ? 1.0 : 0.0;
 
 	for (int i = 0; i < NUM_INPUT_NODES; ++i) {
 		Xbuf[train_pos * NUM_INPUT_NODES + i] = x[i];
@@ -111,7 +110,7 @@ void SampleCondPredictor::update(
 		++train_count;
 	}
 
-	if (train_count == NUM_SAMPLES) {
+	if (train_count >= NUM_SAMPLES) {
 		fitELM(
 			Xbuf,
 			Ybuf,
