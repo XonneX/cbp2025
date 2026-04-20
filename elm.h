@@ -3,9 +3,9 @@
 
 // Baseline https://github.com/burnpiro/elm-pure/blob/master/model.py
 
-const int NUM_SAMPLES = 32; // TODO: Maybe 64
+const int NUM_SAMPLES = 64;
 const int NUM_INPUT_NODES = 32;
-const int NUM_HIDDEN_UNITS = 64; // TODO: Maybe 32
+const int NUM_HIDDEN_UNITS = 32;
 const int NUM_OUT_UNITS = 1;
 
 typedef double (*ActivationFunc)(double);
