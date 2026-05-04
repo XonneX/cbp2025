@@ -14,6 +14,7 @@ static int train_pos = 0;
 
 void SampleCondPredictor::setup()
 {
+	// std::cout << "TEST 123!" << std::endl;
 	active_hist.ghist = 0;
 	active_hist.tage_pred = false;
 
@@ -95,33 +96,35 @@ void SampleCondPredictor::update(
 	uint64_t nextPC,
 	const SampleHist& hist_to_use
 ) {
-	double x[NUM_INPUT_NODES];
-	build_features(PC, hist_to_use, x);
-	
-	double target = resolveDir ? 1.0 : 0.0;
+	if (pred_taken != resolveDir) {
+		double x[NUM_INPUT_NODES];
+		build_features(PC, hist_to_use, x);
+		
+		double target = resolveDir ? 1.0 : 0.0;
 
-	for (int i = 0; i < NUM_INPUT_NODES; ++i) {
-		Xbuf[train_pos * NUM_INPUT_NODES + i] = x[i];
-	}
-	Ybuf[train_pos * NUM_OUT_UNITS] = target;
+		for (int i = 0; i < NUM_INPUT_NODES; ++i) {
+			Xbuf[train_pos * NUM_INPUT_NODES + i] = x[i];
+		}
+		Ybuf[train_pos * NUM_OUT_UNITS] = target;
 
-	train_pos = (train_pos + 1) % NUM_SAMPLES;
-	if (train_count < NUM_SAMPLES) {
-		++train_count;
-	}
+		train_pos = (train_pos + 1) % NUM_SAMPLES;
+		if (train_count < NUM_SAMPLES) {
+			++train_count;
+		}
 
-	if (train_count >= NUM_SAMPLES && pred_taken != resolveDir) {
-		fitELM(
-			Xbuf,
-			Ybuf,
-			W,
-			b,
-			beta,
-			NUM_SAMPLES,
-			NUM_INPUT_NODES,
-			NUM_HIDDEN_UNITS,
-			NUM_OUT_UNITS,
-			getActivation("sigmoid")
-		);
+		if (train_count >= NUM_SAMPLES) {
+			fitELM(
+				Xbuf,
+				Ybuf,
+				W,
+				b,
+				beta,
+				NUM_SAMPLES,
+				NUM_INPUT_NODES,
+				NUM_HIDDEN_UNITS,
+				NUM_OUT_UNITS,
+				getActivation("sigmoid")
+			);
+		}
 	}
 }
