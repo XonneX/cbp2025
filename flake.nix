@@ -16,6 +16,7 @@
         libffi
         openssl
         stdenv.cc.cc
+        zlib
       ];
     in
     {
