@@ -219,7 +219,8 @@ private:
 	}
 
 	static Matrix randomMatrix(int rows, int cols) {
-		static std::mt19937 rng(std::random_device{}());
+		// static std::mt19937 rng(std::random_device{}());
+		static std::mt19937 rng(12345);
 		static std::uniform_real_distribution<double> dist(-1.0, 1.0);
 
 		return Matrix::NullaryExpr(rows, cols, []() {
