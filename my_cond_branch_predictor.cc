@@ -85,19 +85,19 @@ void SampleCondPredictor::update(
 	uint64_t nextPC,
 	const SampleHist& hist_to_use
 ) {
+	Eigen::VectorXd x(NUM_INPUT_NODES);
+	build_features(PC, hist_to_use, x);
+
+	Xbuf.row(train_pos) = x.transpose();
+	Ybuf(train_pos, 0) = resolveDir ? 1.0 : 0.0;
+
+	train_pos = (train_pos + 1) % NUM_SAMPLES;
+		
+	if (train_count < NUM_SAMPLES) {
+		++train_count;
+	}
+
 	if (pred_taken != resolveDir) {
-		Eigen::VectorXd x(NUM_INPUT_NODES);
-		build_features(PC, hist_to_use, x);
-
-		Xbuf.row(train_pos) = x.transpose();
-		Ybuf(train_pos, 0) = resolveDir ? 1.0 : 0.0;
-
-		train_pos = (train_pos + 1) % NUM_SAMPLES;
-
-		if (train_count < NUM_SAMPLES) {
-			++train_count;
-		}
-
 		if (train_count >= NUM_SAMPLES) {
 			elm->fit(Xbuf, Ybuf, false);
 		}
