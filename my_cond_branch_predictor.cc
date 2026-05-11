@@ -23,7 +23,7 @@ void SampleCondPredictor::setup()
 		NUM_INPUT_NODES,
 		NUM_HIDDEN_UNITS,
 		NUM_OUT_UNITS,
-		"sigmoid",
+		"fourier",
 		"mse"
 	);
 
