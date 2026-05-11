@@ -97,9 +97,7 @@ void SampleCondPredictor::update(
 		++train_count;
 	}
 
-	if (pred_taken != resolveDir) {
-		if (train_count >= NUM_SAMPLES) {
-			elm->fit(Xbuf, Ybuf, false);
-		}
+	if (train_count >= NUM_SAMPLES) {
+		elm->fit(Xbuf, Ybuf, false);
 	}
 }
