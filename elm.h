@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <string>
 
-const int NUM_SAMPLES = 512;
+const int NUM_SAMPLES = 128;
 const int NUM_INPUT_NODES = 128;
 const int NUM_HIDDEN_UNITS = 64;
 const int NUM_OUT_UNITS = 1;

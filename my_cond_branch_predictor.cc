@@ -23,7 +23,7 @@ void SampleCondPredictor::setup()
 		NUM_INPUT_NODES,
 		NUM_HIDDEN_UNITS,
 		NUM_OUT_UNITS,
-		"sigmoid",
+		"identity",
 		"mse"
 	);
 
@@ -75,7 +75,7 @@ bool SampleCondPredictor::predict_using_given_hist(
 
 	Eigen::MatrixXd pred = (*elm)(X);
 
-	return pred(0, 0) >= 0.5;
+	return pred(0, 0) >= 0.0;
 }
 
 void SampleCondPredictor::update(
@@ -89,7 +89,7 @@ void SampleCondPredictor::update(
 	build_features(PC, hist_to_use, x);
 
 	Xbuf.row(train_pos) = x.transpose();
-	Ybuf(train_pos, 0) = resolveDir ? 1.0 : 0.0;
+	Ybuf(train_pos, 0) = resolveDir ? 1.0 : -1.0;
 
 	train_pos = (train_pos + 1) % NUM_SAMPLES;
 		
@@ -97,7 +97,7 @@ void SampleCondPredictor::update(
 		++train_count;
 	}
 
-	if (train_count >= NUM_SAMPLES) {
+	if (train_count >= NUM_SAMPLES && train_pos == 0) {
 		elm->fit(Xbuf, Ybuf, false);
 	}
 }
