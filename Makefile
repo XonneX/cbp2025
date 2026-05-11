@@ -30,8 +30,7 @@ CPPFLAGS = -std=c++17 -I./lib $(OPT)
 
 OBJ = \
 	cond_branch_predictor_interface.o \
-	my_cond_branch_predictor.o \
-	elm.o
+	my_cond_branch_predictor.o
 DEPS = \
 	cbp.h \
 	cond_branch_predictor_interface.h \
